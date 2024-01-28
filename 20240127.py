@@ -75,6 +75,11 @@ if uploaded_file is not None:
         image = cv2.resize(image, (image.shape[1],image.shape[0]), interpolation=cv2.INTER_NEAREST)            
 
 
+    st.image(image, caption="After", use_column_width=True, channels="BGR")
+    st.image(original_image, caption="Before (Original)", use_column_width=True, channels="BGR")
+
+
+    ##########################################
 
     st.markdown('<p style="color:red; font-weight:bold; font-style:italic; text-decoration:underline;">For Edge</p>', unsafe_allow_html=True)
     if st.checkbox('Scharr'):
@@ -105,6 +110,10 @@ if uploaded_file is not None:
         image = cv2.Canny(image, threshold1=t1, threshold2=t2)
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
 
+    st.image(image, caption="After", use_column_width=True, channels="BGR")
+    st.image(original_image, caption="Before (Original)", use_column_width=True, channels="BGR")
+
+    ##############################################
 
 
     st.markdown('<p style="color:red; font-weight:bold; font-style:italic; text-decoration:underline;">For Morphology</p>', unsafe_allow_html=True)
