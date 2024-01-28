@@ -78,6 +78,14 @@ if uploaded_file is not None:
     st.image(image, caption="After", use_column_width=True, channels="BGR")
     st.image(original_image, caption="Before (Original)", use_column_width=True, channels="BGR")
 
+    download_button = st.download_button(
+        label='Download your image.',
+        data=save_image_as_png(image=image),
+        file_name='image.png',
+        key='download'
+    )
+    
+
 
     ##########################################
 
@@ -112,6 +120,14 @@ if uploaded_file is not None:
 
     st.image(image, caption="After", use_column_width=True, channels="BGR")
     st.image(original_image, caption="Before (Original)", use_column_width=True, channels="BGR")
+
+    download_button = st.download_button(
+        label='Download your image.',
+        data=save_image_as_png(image=image),
+        file_name='image.png',
+        key='download'
+    )
+
 
     ##############################################
 
