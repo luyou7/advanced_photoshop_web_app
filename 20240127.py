@@ -23,6 +23,12 @@ if uploaded_file is not None:
         contrast = st.slider("Contrast", -100, 100, 0, key="contrast")
         image = cv2.convertScaleAbs(image, alpha=(contrast/127.0 + 1), beta=brightness)
 
+    if st.checkbox('Gamma'):
+        gamma = st.slider("gamma", 0.1, 3.0, 0.7, key="gamma")                 
+        inv_gamma = 1 / gamma                                                             
+        table = np.array([((i / 255) ** inv_gamma) * 255 for i in range(0, 256)]).astype("uint8")
+        image = cv2.LUT(image, table)
+
     if st.checkbox('Satuation'):
         sat_factor = st.slider('Satuation', min_value=0.01, max_value=5.0, step=0.01, value=1.20, key='sat_factor')
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -171,4 +177,46 @@ if uploaded_file is not None:
         data=save_image_as_png(image=image),
         file_name='image.png',
         key='download3'
+    )
+
+
+    ##############################################
+
+
+    st.markdown('<p style="color:red; font-weight:bold; font-style:italic; text-decoration:underline;">Others</p>', unsafe_allow_html=True)
+    if st.checkbox('Threshold'):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        thre_type = st.selectbox('Threshold Type', ('THRESH_BINARY', 'THRESH_BINARY_INV', 'THRESH_TRUNC', 'THRESH_TOZERO', 'THRESH_TOZERO_INV'))
+        thresh = st.slider('thresh', min_value=0, max_value=254, step=1, value=128, key='thresh')
+        max_val = st.slider('max_val', min_value=thresh, max_value=255, step=1, value=255, key='max_value')
+        if thre_type == 'THRESH_BINARY':
+            ret, image = cv2.threshold(image, thresh=thresh, maxval=max_val, type=cv2.THRESH_BINARY)
+        if thre_type == 'THRESH_BINARY_INV':
+            ret, image = cv2.threshold(image, thresh=thresh, maxval=max_val, type=cv2.THRESH_BINARY_INV)
+        if thre_type == 'THRESH_TRUNC':
+            ret, image = cv2.threshold(image, thresh=thresh, maxval=max_val, type=cv2.THRESH_TRUNC)
+        if thre_type == 'THRESH_TOZERO':
+            ret, image = cv2.threshold(image, thresh=thresh, maxval=max_val, type=cv2.THRESH_TOZERO)
+        if thre_type == 'THRESH_TOZERO_INV':
+            ret, image = cv2.threshold(image, thresh=thresh, maxval=max_val, type=cv2.THRESH_TOZERO_INV)
+        
+    if st.checkbox('Adaptive Threshold'):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        adap_thre_type = st.selectbox('Adpat. Threshold Type', ('ADAPTIVE_THRESH_MEAN_C', 'ADAPTIVE_THRESH_GAUSSIAN_C'))
+        max_val = st.slider('max_val', min_value=128, max_value=255, step=1, value=255, key='max_value')
+        blocksize = st.slider('blocksize', min_value=1, max_value=19, step=2, value=11, key='blocksize')
+        C = st.slider('C', min_value=1, max_value=10, step=1, value=2, key='C')
+        if adap_thre_type == 'ADAPTIVE_THRESH_MEAN_C':
+            image = cv2.adaptiveThreshold(image, maxValue=max_val, adaptiveMethod=cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=blocksize, C=C)
+        if adap_thre_type == 'ADAPTIVE_THRESH_GAUSSIAN_C':
+            image = cv2.adaptiveThreshold(image, maxValue=max_val, adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C, thresholdType=cv2.THRESH_BINARY, blockSize=blocksize, C=C)
+ 
+    st.image(image, caption="After", use_column_width=True)
+    st.image(original_image, caption="Before (Original)", use_column_width=True, channels="BGR")
+
+    download_button = st.download_button(
+        label='Download your image',
+        data=save_image_as_png(image=image),
+        file_name='image.png',
+        key='download4'
     )
